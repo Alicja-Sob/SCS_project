@@ -1,0 +1,23 @@
+services:
+  ttp:
+    build: ./ttp
+    container_name: bsk_ttp
+    networks:
+      bsk_net:
+        ipv4_address: 172.20.0.2
+
+  server:
+    build: ./server
+    container_name: bsk_server
+    depends_on:
+      - ttp
+    networks:
+      bsk_net:
+        ipv4_address: 172.20.0.3
+
+networks:
+  bsk_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
