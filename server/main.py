@@ -17,7 +17,7 @@ def main():
     server_public_key, server_private_key = crypto.generate_RSA_key_pair()
     logger.info(f"server id: {server_id}")
     GLOBAL_SERVER_ID = server_id
-
+    active_sessions = {}
     logger.info("server działa")
     
     host = 'ttp'
@@ -77,23 +77,41 @@ def main():
                         data = json.loads(data.decode('utf-8'))
                         logger.info(f"otrzymano dane od klienta: {data}")
                         client_id = data.get("client_id")
+                        request_type = data.get("type", "service_request")
+                        if request_type == "service_request":    
 
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ttp_s:
-                            ttp_s.connect((host, port))
-                            payload = {
-                                "type": "session_request",
-                                "server_id": GLOBAL_SERVER_ID,
-                                "client_id": client_id
-                            }
+                            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ttp_s:
+                                ttp_s.connect((host, port))
+                                payload = {
+                                    "type": "session_request",
+                                    "server_id": GLOBAL_SERVER_ID,
+                                    "client_id": client_id
+                                }
 
-                            ttp_s.sendall(json.dumps(payload).encode('utf-8'))
-                            logger.info(f"wysłano zapytanie o autoryzację klienta do ttp: {payload}")
+                                ttp_s.sendall(json.dumps(payload).encode('utf-8'))
+                                logger.info(f"wysłano zapytanie o autoryzację klienta do ttp: {payload}")
 
-                            ttp_response = ttp_s.recv(4096)
-                            if ttp_response:
-                                logger.info(f"otrzymano odpowiedź od ttp z kluczem sesyjnym: {ttp_response.decode('utf-8')}")
-                                ttp_response_data = json.loads(ttp_response.decode('utf-8'))
+                                ttp_response = ttp_s.recv(4096)
+                                
+                                if ttp_response:
+                                    logger.info(f"otrzymano odpowiedź od ttp z kluczem sesyjnym: {ttp_response.decode('utf-8')}")
+                                    ttp_response_data = json.loads(ttp_response.decode('utf-8'))
+                                    
+                                    if ttp_response_data.get("status") == "OK":
+                                        encrypted_session_key = base64.b64decode(ttp_response_data["encrypted_session_key"])
+                                        session_key = crypto.decrypt_data(server_private_key, encrypted_session_key)
+                                        logger.info(f"odszyfrowano klucz sesyjny: {session_key.hex()}")
+                                        active_sessions[client_id] = session_key
 
+                        elif request_type =="secure_data":
+                            logger.info(f"otrzymano zaszyfrowane dane od klienta: {data}")
+                            session_key = active_sessions[client_id]
+                            decrypted_data = crypto.decrypt_aes(session_key, base64.b64decode(data["encrypted_data"]))
+                            logger.info(f"odszyfrowane dane od klienta: {decrypted_data.decode('utf-8')}")
+                        
+                        else : 
+                            logger.warning(f"nieznany typ żądania od klienta: {request_type}")
+        
         except KeyboardInterrupt:
             logger.info("shutdown")
 

@@ -1,5 +1,6 @@
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding 
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography import x509
@@ -76,3 +77,17 @@ def decrypt_data(private_key, encrypted_data):
 
 def generate_aes_key():
     return os.urandom(32)
+
+def encrypt_aes(key, plaintext):
+    iv = os.urandom(16)
+    cipher = Cipher(algorithms.AES(key), modes.CFB(iv))
+    encryptor = cipher.encryptor()
+    ciphertext = iv + encryptor.update(plaintext) + encryptor.finalize()
+    return ciphertext
+
+def decrypt_aes(key, ciphertext):
+    iv = ciphertext[:16]
+    cipher = Cipher(algorithms.AES(key), modes.CFB(iv))
+    decryptor = cipher.decryptor()
+    plaintext = decryptor.update(ciphertext[16:]) + decryptor.finalize()
+    return plaintext

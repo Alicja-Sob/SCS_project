@@ -15,3 +15,21 @@ docker-compose logs -f
 
 to turn off :
 docker-compose down
+
+# using client
+cd user
+python client_gui.py
+
+# flow test 
+
+1. Click **"Zaloguj do TTP"**.
+   - Wait for the green "Autoryzacja poprawna" status (RSA keys are exchanged).
+2. Click **"Pobierz klucz AES"**.
+   - Wait for the green "klucz AES pobrany" status (AES session key is fetched from TTP).
+3. Type a test message in the input box.
+4. Click **"Wyślij wiadomość"**.
+   - The message is encrypted with AES-256 and sent to the Server.
+5. Check Docker logs.
+   - You should see the Server receiving the secure payload and printing your decrypted message: `odszyfrowane dane od klienta: [your text]`.
+
+* Server does everything automaticaly
