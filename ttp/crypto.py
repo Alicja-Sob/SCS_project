@@ -72,3 +72,5 @@ def decrypt_data(private_key, encrypted_data):
             label=None
         )
     )
+def generate_aes_key():
+    return os.urandom(32)
