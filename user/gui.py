@@ -43,14 +43,14 @@ def simulate_auth():
                 
                 cert_response = s.recv(4096)
                 if cert_response:
-                    status_label.config(text="🟢 Autoryzacja poprawna", fg="green")
+                    status_label.config(text="Autoryzacja poprawna", fg="green")
                     service_btn.config(state=tk.NORMAL)
         
         except Exception as e:
-            status_label.config(text=f"❌ Błąd: {e}", fg="red")
+            status_label.config(text=f"Błąd: {e}", fg="red")
 
 def request_service():
-    status_label.config(text="🔵 Usługa aktywna", fg="blue")
+    status_label.config(text="Usługa aktywna", fg="blue")
     server_host = '127.0.0.1'
     server_port = 7000
     ttp_port = 5000
@@ -77,19 +77,19 @@ def request_service():
                         encrypted_session_key = base64.b64decode(data["encrypted_session_key"])
                         session_key = crypto.decrypt_data(GLOBAL_PRIVATE_KEY, encrypted_session_key)
 
-                        status_label.config(text="🟢 klucz AES pobrany", fg="green")
+                        status_label.config(text="klucz AES pobrany", fg="green")
                         print (f"otrzymany klucz AES: {session_key.hex()}")
                     else:
-                        status_label.config(text="❌ Błąd pobierania klucza AES", fg="red")
+                        status_label.config(text="Błąd pobierania klucza AES", fg="red")
 
     except Exception as e:
-        status_label.config(text=f"❌ Błąd: {e}", fg="red")
+        status_label.config(text=f"Błąd: {e}", fg="red")
 
 root = tk.Tk()
 root.title("Klient")
 root.geometry("500x200")
 
-status_label = tk.Label(root, text="🔴 Brak uwierzytelnienia", fg="red")
+status_label = tk.Label(root, text="Brak uwierzytelnienia", fg="red")
 status_label.pack(pady=10)
 
 auth_btn = tk.Button(root, text="Zaloguj do TTP", command=simulate_auth)
