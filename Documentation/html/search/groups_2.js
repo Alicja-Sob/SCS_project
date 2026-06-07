@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['gui_0',['GUI',['../group__group2-1__client.html',1,'']]]
+  ['gui_20methods_0',['GUI methods',['../group__group2-1__client.html',1,'']]]
 ];

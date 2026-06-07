@@ -20,7 +20,15 @@ logger = logging.getLogger("Server_App")
 
 ## @ingroup group2-server
 ## @file server/main.py
-## @brief TODO ....
+## @brief Starts the server application.
+## @details The server:
+## - Generates its own RSA key pair and unique ID
+## - Registers itself with the Trusted Third Party (TTP)
+## - Receives and stores a certificate issued by the TTP
+## - Accepts client service requests
+## - Requests session keys from the TTP
+## - Receives encrypted messages from authenticated clients
+## - Decrypts received data using negotiated AES session keys
 def main():
 
     logger.info("Generating IDs and keys by the server")

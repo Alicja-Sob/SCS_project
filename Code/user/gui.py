@@ -13,7 +13,7 @@ GLOBAL_SESSION_KEY = None
 
 ## @ingroup group2-user
 ## @file user/gui.py
-## @brief todo
+## @brief Methods facilitating the app's GUI and running the client application
 
 ## @defgroup group2-1_client GUI methods
 ## @ingroup group2-user
