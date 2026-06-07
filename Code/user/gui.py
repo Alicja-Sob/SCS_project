@@ -1,4 +1,3 @@
-import threading
 import time
 import tkinter as tk
 import crypto
@@ -8,6 +7,27 @@ import base64
 GLOBAL_CLIENT_ID = None
 GLOBAL_SESSION_KEY = None
 
+## @defgroup group2-user User app
+## @ingroup group2_mains
+## Files, methods, etc used to run the user application and facilitate its GUI
+
+## @ingroup group2-user
+## @file user/gui.py
+## @brief todo
+
+## @defgroup group2-1_client GUI methods
+## @ingroup group2-user
+## Methods facilitating the client application's GUI
+## @ingroup group2_mains
+
+## @ingroup group2-1_client
+## @brief Simulates client authentication with a Trusted Third Party (TTP)
+## @details Generates a client ID and RSA keys and performs a registration handshake with a trusted third party (TTP) over a TCP socket
+## The client ID is encrypted with a TTP public key and sent along with the clients public key.
+##
+## If successfull service access is enabled in the GUI
+## @exception socket.error - network communication failure
+## @exception json.JSONDecodeError - invalid JSON response from TTP
 def simulate_auth():
     global GLOBAL_CLIENT_ID, GLOBAL_PRIVATE_KEY
     client_id = crypto.generate_random_id()
@@ -45,15 +65,22 @@ def simulate_auth():
                 
                 cert_response = s.recv(4096)
                 if cert_response:
-                    status_label.config(text="Autoryzacja poprawna", fg="green")
+                    status_label.config(text="Authorization correct", fg="green")
                     service_btn.config(state=tk.NORMAL)
         
         except Exception as e:
             status_label.config(text=f"Błąd: {e}", fg="red")
 
+
+## @ingroup group2-1_client
+## @brief Requests a session key from the TTP and service access from server
+## @details Sends a service request to the main server, then contacts the TTP to retrieve an encrypted AES session key.
+## The key is decrypted using the client's private RSA key and stored globally for later encrypted communication.
+## @exception socket.error - network communication failure
+## @exception json.JSONDecodeError - invalid JSON response
 def request_service():
     global GLOBAL_SESSION_KEY
-    status_label.config(text="Usługa aktywna", fg="blue")
+    status_label.config(text="Service active", fg="blue")
     server_host = '127.0.0.1'
     server_port = 7000
     ttp_port = 5000
@@ -83,20 +110,27 @@ def request_service():
                         session_key = crypto.decrypt_data(GLOBAL_PRIVATE_KEY, encrypted_session_key)
                         GLOBAL_SESSION_KEY = session_key
 
-                        status_label.config(text="klucz AES pobrany", fg="green")
+                        status_label.config(text="AES key obtained", fg="green")
                         msg_entry.config(state=tk.NORMAL)
                         send_btn.config(state=tk.NORMAL)
-                        print (f"otrzymany klucz AES: {session_key.hex()}")
+                        print (f"Received AES key: {session_key.hex()}")
                     else:
-                        status_label.config(text="Błąd pobierania klucza AES", fg="red")
+                        status_label.config(text="Error while obtaining the AES key", fg="red")
 
     except Exception as e:
-        status_label.config(text=f"Błąd: {e}", fg="red")
+        status_label.config(text=f"Error: {e}", fg="red")
+
+
+## @ingroup group2-1_client
+## @brief Sends an encrypted message to the server
+## @details Encrypts a user-provided message using a AES session key and sends it securely to the server via TCP.
+## @exception AttributeError - Raised if GUI elements or session key are not initialized
+## @exception socket.error - Network communication failure
 def send_message():
     message = msg_entry.get()
     if GLOBAL_SESSION_KEY:
             encrypted_message = crypto.encrypt_aes(GLOBAL_SESSION_KEY, message.encode('utf-8'))
-            print(f"zaszyfrowana wiadomość: {encrypted_message.hex()}")
+            print(f"Encrypted message: {encrypted_message.hex()}")
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.connect(('127.0.0.1', 7000))
                 payload = {
@@ -105,31 +139,38 @@ def send_message():
                     "encrypted_data": base64.b64encode(encrypted_message).decode('utf-8')
                 }
                 s.sendall(json.dumps(payload).encode('utf-8'))
-            status_label.config(text="Wiadomość wysłana", fg="green")
+            status_label.config(text="Message sent", fg="green")
             msg_entry.delete(0, tk.END)
             
     else:
-        status_label.config(text="Brak klucza AES", fg="red")
+        status_label.config(text="No AES key", fg="red")
 
 
+## @ingroup group2-1_client
+## @brief Initializes and runs the client GUI application
+## @details Creates a Tkinter-based GUI that allows the user to:
+## - Authenticate with a Trusted Third Party (TTP) ("Log in with TTP")
+## - Request a secure AES session key ("Download AES key")
+## - Input and send encrypted messages to a server ("Send message")
+## The GUI remains active via the Tk main event loop.
 root = tk.Tk()
-root.title("Klient")
+root.title("Client")
 root.geometry("500x350")
 
-status_label = tk.Label(root, text="Brak uwierzytelnienia", fg="red")
+status_label = tk.Label(root, text="No authorization", fg="red")
 status_label.pack(pady=10)
 
-auth_btn = tk.Button(root, text="Zaloguj do TTP", command=simulate_auth)
+auth_btn = tk.Button(root, text="Log in with TTP", command=simulate_auth)
 auth_btn.pack(pady=5)
 
-service_btn = tk.Button(root, text="Pobierz klucz AES", state=tk.DISABLED, command=request_service)
+service_btn = tk.Button(root, text="Download AES key", state=tk.DISABLED, command=request_service)
 service_btn.pack()
 
-tk.Label(root, text="Wiadomość do serwera:").pack(pady=10)
+tk.Label(root, text="Message for the server:").pack(pady=10)
 msg_entry = tk.Entry(root, width=50, state=tk.DISABLED)
 msg_entry.pack(pady=5)
 
-send_btn = tk.Button(root, text="Wyślij wiadomość", state=tk.DISABLED, command=send_message)
+send_btn = tk.Button(root, text="Send message", state=tk.DISABLED, command=send_message)
 send_btn.pack(pady=5)
 
 root.mainloop()

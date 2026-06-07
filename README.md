@@ -16,11 +16,11 @@ docker-compose logs -f
 to turn off :
 docker-compose down
 
-# using client
+## using client
 cd user
 python client_gui.py
 
-# flow test 
+## flow test 
 
 1. Click **"Zaloguj do TTP"**.
    - Wait for the green "Autoryzacja poprawna" status (RSA keys are exchanged).

@@ -1,6 +1,6 @@
 services:
   ttp:
-    build: ./ttp
+    build: Code/ttp
     container_name: bsk_ttp
     ports: 
     - "5000:5000"
@@ -9,7 +9,7 @@ services:
         ipv4_address: 172.20.0.2
 
   server:
-    build: ./server
+    build: Code/server
     container_name: bsk_server
     ports:
       - "7000:7000"

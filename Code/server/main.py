@@ -8,17 +8,28 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger("Server_App") 
+logger = logging.getLogger("Server_App")
 
+
+## @defgroup group2_mains Running the Applications
+## Main methods running each of the specific applications (TTP, user and server)
+
+## @defgroup group2-server Server app
+## @ingroup group2_mains
+## Files, methods, etc used to run the server application
+
+## @ingroup group2-server
+## @file server/main.py
+## @brief TODO ....
 def main():
 
-    logger.info("generowanie id oraz kluczy przez serwer")
+    logger.info("Generating IDs and keys by the server")
     server_id = crypto.generate_random_id()
     server_public_key, server_private_key = crypto.generate_RSA_key_pair()
     logger.info(f"server id: {server_id}")
     GLOBAL_SERVER_ID = server_id
     active_sessions = {}
-    logger.info("server działa")
+    logger.info("server running")
     
     host = 'ttp'
     port = 5000
@@ -34,7 +45,7 @@ def main():
                 data = json.loads(data.decode('utf-8'))
                 ttp_id = data["id"]
                 ttp_public_key = crypto.deserialize_public_key(data["public_key"].encode('utf-8'))
-                logger.info(f"otrzymano dane od ttp: {data}")
+                logger.info(f"Recieved data from TTP: {data}")
 
                 encrypted_server_id = crypto.encrypt_data(ttp_public_key, server_id.encode('utf-8'))
                 encrypted_server_id_str = base64.b64encode(encrypted_server_id).decode('utf-8')
@@ -46,10 +57,10 @@ def main():
                     "server_public_key": server_public_key_str
                 }
                 s.sendall(json.dumps(payload).encode('utf-8'))
-                logger.info(f"wysłano zaszyfrowany id serwera oraz klucz publiczny do ttp: {payload}")
+                logger.info(f"Sent out encrypted server ID and public key to TTP: {payload}")
                 cert_response = s.recv(4096)
                 if cert_response:
-                    logger.info(f"otrzymano certyfikat od ttp: {cert_response.decode('utf-8')}")
+                    logger.info(f"Received certificate from TTP: {cert_response.decode('utf-8')}")
                     
             # logger.info("server : connected")
             # payload = {
@@ -65,17 +76,17 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((server_host, server_port))
         s.listen()
-        logger.info(f"serwer nasłuchuje na porcie {server_port}")
+        logger.info(f"Server listening at {server_port}")
     
         try:
             while True:
                 conn, addr = s.accept()
                 with conn:
-                    logger.info(f"połączono z klientem: {addr}")
+                    logger.info(f"Connected to client: {addr}")
                     data = conn.recv(4096)
                     if data:
                         data = json.loads(data.decode('utf-8'))
-                        logger.info(f"otrzymano dane od klienta: {data}")
+                        logger.info(f"Received data from client: {data}")
                         client_id = data.get("client_id")
                         request_type = data.get("type", "service_request")
                         if request_type == "service_request":    
@@ -89,28 +100,28 @@ def main():
                                 }
 
                                 ttp_s.sendall(json.dumps(payload).encode('utf-8'))
-                                logger.info(f"wysłano zapytanie o autoryzację klienta do ttp: {payload}")
+                                logger.info(f"Sent out ask for client authorization to TTP: {payload}")
 
                                 ttp_response = ttp_s.recv(4096)
                                 
                                 if ttp_response:
-                                    logger.info(f"otrzymano odpowiedź od ttp z kluczem sesyjnym: {ttp_response.decode('utf-8')}")
+                                    logger.info(f"Received an answer with session key from TTP: {ttp_response.decode('utf-8')}")
                                     ttp_response_data = json.loads(ttp_response.decode('utf-8'))
                                     
                                     if ttp_response_data.get("status") == "OK":
                                         encrypted_session_key = base64.b64decode(ttp_response_data["encrypted_session_key"])
                                         session_key = crypto.decrypt_data(server_private_key, encrypted_session_key)
-                                        logger.info(f"odszyfrowano klucz sesyjny: {session_key.hex()}")
+                                        logger.info(f"Decrypted session key: {session_key.hex()}")
                                         active_sessions[client_id] = session_key
 
                         elif request_type =="secure_data":
-                            logger.info(f"otrzymano zaszyfrowane dane od klienta: {data}")
+                            logger.info(f"Received encrypted data from client: {data}")
                             session_key = active_sessions[client_id]
                             decrypted_data = crypto.decrypt_aes(session_key, base64.b64decode(data["encrypted_data"]))
-                            logger.info(f"odszyfrowane dane od klienta: {decrypted_data.decode('utf-8')}")
+                            logger.info(f"Decrypted data from client: {decrypted_data.decode('utf-8')}")
                         
                         else : 
-                            logger.warning(f"nieznany typ żądania od klienta: {request_type}")
+                            logger.warning(f"Unknown client request type: {request_type}")
         
         except KeyboardInterrupt:
             logger.info("shutdown")
