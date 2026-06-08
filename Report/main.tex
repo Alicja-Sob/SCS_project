@@ -86,7 +86,7 @@ Alicja Sobiech, 188861\\
 Miłosz Gonsior, 193475
 \\
 \vspace{10mm}
-Version: 2.5
+Version: 2.6
 }
 
 \end{center}
@@ -108,14 +108,15 @@ Version: 2.5
 \begin{tabularx}{\textwidth}{|c|c|Y|}
 \hline
 \textbf{Versions} & \textbf{Date} & \textbf{Description of changes} \\ \hline
-1.0               & 04.04.2026      & Creation of document \\ \hline
-1.1               & 07.04.2026      & Filling out the control meeting section \\ \hline
-2.0               & 17.05.2026      & Translating the document from .docx to .tex \\ \hline
+1.0               & 04.04.2026      & Created the document \\ \hline
+1.1               & 07.04.2026      & Filled out the control meeting section \\ \hline
+2.0               & 17.05.2026      & Changed the document from .docx to .tex \\ \hline
 2.1               & 31.05.2026      & Initial version of section 2  \\ \hline
 2.2               & 07.06.2026      & Filling out section 2 \\ \hline
-2.3               & 08.06.2026      & Completing the bibliography \\ \hline
-2.4               & 08.06.2026      & Completing section 2 \\ \hline
-2.5               & 08.06.2026      & Final formatting improvements \\ \hline
+2.3               & 07.06.2026      & Added a glossary \\ \hline
+2.4               & 08.06.2026      & Completed the bibliography \\ \hline
+2.5               & 08.06.2026      & Completed section 2 \\ \hline
+2.6               & 09.06.2026      & Final formatting improvements \\ \hline
 \end{tabularx}
 \end{adjustbox}
 }
@@ -187,7 +188,7 @@ List.1 RSA and AES key generation
 \vspace{4pt}
 
 \noindent
-The key serialization converts them into PEM-encoded bytes. The public key is encrypted during this process while the private key remains without encryption. 
+The key serialization converts them into PEM-encoded bytes. The public key is encrypted during this process while the private key remains without encryption.
 Deserialization is done using \mintinline{python}{load_pem_public_key()} and \mintinline{python}{load_pem_private_key()} methods.
 
 \begin{minted}{python}
@@ -214,7 +215,7 @@ def serialize_private_key(private_key):
 
 def deserialize_private_key(serialized_private_key):
     return serialization.load_pem_private_key(
-        serialized_private_key, 
+        serialized_private_key,
         password=None)
 \end{minted}
 \begin{center}
@@ -228,7 +229,7 @@ The certificate is generated using \mintinline{python}{x509.CertificateBuilder()
 def generate_certificate(subject_id, subject_public_key,
                         issuer_id, issuer_private_key):
     builder = x509.CertificateBuilder()
-    
+
     builder = builder.subject_name(x509.Name(
                 [x509.NameAttribute(NameOID.COMMON_NAME, subject_id)]))
     builder = builder.issuer_name(x509.Name(
@@ -259,6 +260,44 @@ def deserialize_certificate(serialized_cert):
 List.5 Certificate serialization and deserialization
 \end{center}
 
+\noindent
+We can also check whether a given certificate is authentic. Our method checks if the certificate was signed by the proper party, using the proper issuers public key.
+\begin{minted}{python}
+def verify_certificate(cert, issuer_public_key):
+    try:
+        issuer_public_key.verify(
+            cert.signature,
+            cert.tbs_certificate_bytes,
+            padding.PKCS1v15(),
+            cert.signature_hash_algorithm )
+        return True
+    except Exception as e:
+        return False
+\end{minted}
+\begin{center}
+List.6 Certificate verification
+\end{center}
+
+\begin{minted}{python}
+try :
+    client_cert_obj =
+        crypto.deserialize_certificate(client_cert_str.encode('utf-8'))
+    is_valid =
+        crypto.verify_certificate(client_cert_obj, GLOBAL_TTP_PUBLIC_KEY)
+
+    if not is_valid:
+        logger.warning(f"Client rejected {client_id[:8]}."
+                        " The certificate is forged")
+        continue
+except Exception as e:
+    logger.warning(f"Client rejected {client_id[:8]}."
+                        " Couldn't verify the certificate: {e}")
+    continue
+\end{minted}
+\begin{center}
+List.7 Certificate verification by the server using method shown in List.6
+\end{center}
+
 \subsubsection{Data encryption and decryption}
 
 Data can be encrypted and decrypted in two ways: using RSA (Rivest-Shamir-Adleman algorithm) with OAEP padding and SHA-256 algorithm or using AES (Advanced Encryption Standard) with CFB mode (Cipher Feedback Mode).
@@ -270,10 +309,17 @@ def encrypt_data(public_key, data):
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None 
-        ) 
+            label=None
+        )
     )
+\end{minted}
+\begin{center}
+List.8 Data encryption using RSA-OAEP with SHA-256
+\end{center}
 
+\newpage
+
+\begin{minted}{python}
 def decrypt_data(private_key, encrypted_data):
     return private_key.decrypt(
         encrypted_data,
@@ -281,11 +327,11 @@ def decrypt_data(private_key, encrypted_data):
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
             label=None
-        ) 
+        )
     )
 \end{minted}
 \begin{center}
-List.6 Data encryption and decryption using RSA-OAEP with SHA-256 
+List.9 Data decryption using RSA-OAEP with SHA-256
 \end{center}
 
 \begin{minted}{python}
@@ -295,7 +341,12 @@ def encrypt_aes(key, plaintext):
     encryptor = cipher.encryptor()
     ciphertext = iv + encryptor.update(plaintext) + encryptor.finalize()
     return ciphertext
+\end{minted}
+\begin{center}
+List.10 Data encryption using AES
+\end{center}
 
+\begin{minted}{python}
 def decrypt_aes(key, ciphertext):
     iv = ciphertext[:16]
     cipher = Cipher(algorithms.AES(key), modes.CFB(iv))
@@ -304,7 +355,7 @@ def decrypt_aes(key, ciphertext):
     return plaintext
 \end{minted}
 \begin{center}
-List.7 Data encryption and decryption using AES
+List.11 Data decryption using AES
 \end{center}
 
 \newpage
@@ -388,7 +439,7 @@ Fig.7 Decrypted message in server console after step 4
 
 \noindent
 \begin{minipage}[]{0.475\textwidth}
-In order to test how our applications behave when client IDs sent to the server and TTP are different we temporarily modified our code, so that TTP recieved the correct client ID, and the server recieved a fake ID.\\\\ \noindent As a result we were not able to obtain the AES key. 
+In order to test how our applications behave when client IDs sent to the server and TTP are different we temporarily modified our code, so that TTP recieved the correct client ID, and the server recieved a fake ID.\\\\ \noindent As a result we were not able to obtain the AES key.
 
 \vspace{60pt}
 
@@ -404,22 +455,94 @@ Fig.8 GUI state after attempting to obtain an AES key
 
 \begin{minted}{python}
 client_id = crypto.generate_random_id()
-    
+
 s.connect((server_host, server_port))
-payload = { "type": "service_request", "client_id": "fake ID" }
+payload = {
+    "type": "service_request",
+    "client_id": "fake ID",
+    "certificate": GLOBAL_CERTIFICATE }
 
 ttp_s.connect((ttp_host, ttp_port))
 payload={ "type": "fetch_key", "client_id": client_id }
 \end{minted}
 \begin{center}
-List.8 Payloads for server (\mintinline{python}{s}) and ttp (\mintinline{python}{ttp_s}) simulating mismatch in client IDs
+List.12 Payloads for server (\mintinline{python}{s}) and ttp (\mintinline{python}{ttp_s}) simulating mismatch in client IDs
 \end{center}
 
-\subsubsection{Forged certificate}
+\subsubsection{Forged certificate (Man in the Middle Attack)}
 
-??? do we even have certificate checking
+\noindent
+\begin{minipage}[]{0.475\textwidth}
+The testing of how our system handles forged certificates is done using \mintinline{python}{test_forged_certificate()} method shown in List.13.\\\\ \noindent
+During the test the client sends a forged/modified version of the original, correct certificate to the server. The server attempts to verify it using TTP public key, which fails. As a result the server rejects the client and doesn't establish the session key
+
+\vspace{15pt}
+
+\end{minipage}\hfill
+\hspace{0.05\textwidth}
+\begin{minipage}[c]{0.475\textwidth}
+\begin{center}
+    \includegraphics[width = \textwidth]{tests/wrong_certificate/ss.png}
+
+Fig.9 GUI state after clicking "Send Forged Certificate"
+\end{center}
+\end{minipage}
+
+
+\newpage
+\begin{center}
+    \includegraphics[width = \textwidth]{tests/wrong_certificate/server.png}
+
+Fig.10 Server handling of a forged certificate
+\end{center}
+
+
+\begin{minted}{python}
+def test_forged_certificate():
+    if not GLOBAL_CERTIFICATE:
+        return
+    forged_cert = GLOBAL_CERTIFICATE.replace('a', 'b', 1)
+    server_host, server_port = '127.0.0.1', 7000
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((server_host, server_port))
+            payload = {
+                "type": "service_request",
+                "client_id": GLOBAL_CLIENT_ID,
+                "certificate": forged_cert
+            }
+            s.sendall(json.dumps(payload).encode('utf-8'))
+
+        status_label.config(text="Sent Forged Certificate", fg="orange")
+    except Exception as e:
+        print(e)
+\end{minted}
+\begin{center}
+List.13 Method for testing how out system behaves when confronted with a forged certificate
+\end{center}
+
 
 \subsection{Summary}
+
+We succeed in developing a working TTP, Server, Client enviroment as specified in the project instruction. \(^{\text{[1]}}\) As the tests conducted and described in section 2.4 showed, our system is resistant to attacks like a MITM (Man in the Middle) attack.
+
+\newpage
+\section{Glossary}
+\paragraph{TTP (Trusted Third Party)} - An entity other than the key pair owner and verifier that is trusted by either one or both of them \(^{\text{[2]}}\)
+\paragraph{RSA (Rivest-Shamir-Adleman) Algorithm} - an asymmetric or public-key cryptography algorithm where the public key is used for encryption, while the private key is used for decryption. The algorithm is based on factorization of large number and modular arithmetic for encrypting and decrypting data. \(^{\text{[3]}}\)
+
+\paragraph{OAEP (Optimal Asymmetric Encryption Padding)} - padding scheme used for processing the plaintext prior to asymmetric encryption. It adds an element of randomness and allows prevention o partial decryption of ciphertexts by ensuring that an attacker cannot recover any portion of the plaintext without being able to invert the trapdoor permutation. \(^{\text{[4]}}\)
+
+\paragraph{AES (Advanced Encryption Standard)} - a highly trusted encryption algorithm used to secure data by converting it into a format unreadable without the proper key. It relies on the substitution-permutation network principle, which is performed using a series of linked operations that involving replacing and shuffling the input data. \(^{\text{[5]}}\)
+
+\paragraph{PEM (Privacy-Enhanced Mail)} - file format for storing and sending cryptographic keys, certificates, and other data. It wroks by encoding the binary data using base64 and defining a header and a footer \(^{\text{[6]}}\)
+
+\paragraph{SHA-256 (Secure Hash Algorithm 256)} - part of a set of cryptographic hash functions designed by the NSA (SHA-2). SHA-256 has a 256 bit hash value, so it converts input data into a fixed-length 256-bit string.  \(^{\text{[7], [8]}}\)
+
+\paragraph{CFB (Cipher Feedback)} - mode of operation for a block cipher in which the cipher is given as feedback to the next block of encryption with some new specifications. CFB can handle data streams of any size, though there is some data loss due to the use of shift register \(^{\text{[9]}}\)
+
+\paragraph{x509} - standard defining the format of public key certificates. These certificates bind an identity to a public key using a digital signature and defines certificate revocation lists.  A certificate contains an identity, a public key, and is either signed by a certificate authority or is self-signed \(^{\text{[10]}}\)
+
 
 % ---------------------------------------------------------------------------------
 % ZRODLA --------------------------------------------------------------------------
@@ -431,25 +554,29 @@ List.8 Payloads for server (\mintinline{python}{s}) and ttp (\mintinline{python}
 
 \item Rajchowski P.: \textit{Security of Computer Systems - Project. Emulating environment with Trusted Thrid Party and Client-Server data exchange scenario} [Project instruction], Gdańsk (Gdańsk University of Technology), 23.02.2026
 
-\item Online \textit{Doxygen} documentation, [accessed on 07.06.2026], Aviable at: \url{https://www.doxygen.nl/manual/lists.html}
+\item \textit{Digital Signature Standard (DSS)}, United States (Information Technology Laboratory National Institute of Standards and Technology), 03.02.2023, FIPS 186-5, Available at: \url{https://doi.org/10.6028/NIST.FIPS.186-5}
 
-\item Online \textit{cryptography} documentation, [accessed on 07.06.2026], Aviable at: \url{https://cryptography.io/en/latest/}
+\item \textit{RSA Algorithm in Cryptography}, In: GeeksForGeeks, [online], 23.07.2025, [accessed on 07.06.2026], Available at: \url{https://www.geeksforgeeks.org/computer-networks/rsa-algorithm-cryptography/}
 
-\item Mumba E.: \textit{Mastering Python Function Documentation: A Practical Guide}, In: DeepDocs, 15.11.2025 [accessed on 07.06.2026], Aviable at: \url{https://deepdocs.dev/function-documentation-python/}
+\item \textit{Optimal asymmetric encryption padding}, In: Wikipedia, [online], 18.02.2026, [accessed on 07.06.2026], Aviable at: \url{https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding}
 
-\item \textit{Privacy-Enhanced Mail}, In: Wikipedia, [online], 27.02.2026, [accessed on 06.06.2026], Aviable at: \url{https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail}
+\item Abhinand S.: \textit{Advanced Encryption Standard (AES)}, In: GeeksForGeeks, [online], 08.08.2025, [accessed on 07.06.2026], Available at: \url{https://www.geeksforgeeks.org/computer-networks/advanced-encryption-standard-aes/}
 
-\item \textit{X.509}, In: Wikipedia, [online], 22.04.2026, [accessed on 07.06.2026], Aviable at: \url{https://en.wikipedia.org/wiki/X.509}
+\item \textit{Privacy-Enhanced Mail}, In: Wikipedia, [online], 27.02.2026, [accessed on 06.06.2026], Available at: \url{https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail}
 
-\item \textit{SHA-2}, In: Wikipedia, [online], 24.05.2026, [accessed on 07.06.2026], Aviable at: \url{https://en.wikipedia.org/wiki/SHA-2}
+\item \textit{SHA-2}, In: Wikipedia, [online], 24.05.2026, [accessed on 07.06.2026], Available at: \url{https://en.wikipedia.org/wiki/SHA-2}
 
-\item Moriarty K. et al.:\textit{PKCS \#1: RSA Cryptography Specifications Version 2.2}, In: RFC Editor, United States, 01.11.2016, 8017, ISSN: 2070-1721, Aviable at: \url{https://doi.org/10.17487/RFC8017}
+\item Gitlan D.: \textit{What is the SHA-256 Algorithm \& How It Works}, In: SSL Dragon, [online], 13.05,2025, [accessed on 08.06.2026], Aviable at: \url{https://www.ssldragon.com/blog/sha-256-algorithm/}
 
-\item \textit{RSA Algorithm in Cryptography}, In: GeeksForGeeks, 23.07.2025, [accessed on 07.06.2026], Aviable at: \url{https://www.geeksforgeeks.org/computer-networks/rsa-algorithm-cryptography/}
+\item Kattamuri M.: \textit{Block Cipher modes of Operation}, In: GeeksForGeeks, [online], 30.05.2026, [accessed on 07.06.2026], Available at: \url{https://www.geeksforgeeks.org/ethical-hacking/block-cipher-modes-of-operation/}
 
-\item Abhinand S.: \textit{Advanced Encryption Standard (AES)}, In: GeeksForGeeks, 08.08.2025, [accessed on 07.06.2026], Aviable at: \url{https://www.geeksforgeeks.org/computer-networks/advanced-encryption-standard-aes/}
+\item \textit{X.509}, In: Wikipedia, [online], 22.04.2026, [accessed on 07.06.2026], Available at: \url{https://en.wikipedia.org/wiki/X.509}
 
-\item Kattamuri M.: \textit{Block Cipher modes of Operation}, In: GeeksForGeeks, 30.05.2026, [accessed on 07.06.2026], Aviable at: \url{https://www.geeksforgeeks.org/ethical-hacking/block-cipher-modes-of-operation/}
+\item Online \textit{Doxygen} documentation, [accessed on 07.06.2026], Available at: \url{https://www.doxygen.nl/manual/lists.html}
+
+\item Online \textit{cryptography} documentation, [accessed on 07.06.2026], Available at: \url{https://cryptography.io/en/latest/}
+
+\item Mumba E.: \textit{Mastering Python Function Documentation: A Practical Guide}, In: DeepDocs, 15.11.2025 [accessed on 07.06.2026], Available at: \url{https://deepdocs.dev/function-documentation-python/}
 
 \end{enumerate}
 

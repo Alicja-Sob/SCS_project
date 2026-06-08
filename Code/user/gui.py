@@ -16,12 +16,7 @@ GLOBAL_CERTIFICATE = None
 ## @file user/gui.py
 ## @brief Methods facilitating the app's GUI and running the client application
 
-## @defgroup group2-1_client GUI methods
 ## @ingroup group2-user
-## Methods facilitating the client application's GUI
-## @ingroup group2_mains
-
-## @ingroup group2-1_client
 ## @brief Simulates client authentication with a Trusted Third Party (TTP)
 ## @details Generates a client ID and RSA keys and performs a registration handshake with a trusted third party (TTP) over a TCP socket
 ## The client ID is encrypted with a TTP public key and sent along with the clients public key.
@@ -71,10 +66,10 @@ def simulate_auth():
                     forge_btn.config(state=tk.NORMAL)
         
         except Exception as e:
-            status_label.config(text=f"Błąd: {e}", fg="red")
+            status_label.config(text=f"Error: {e}", fg="red")
 
 
-## @ingroup group2-1_client
+## @ingroup group2-user
 ## @brief Requests a session key from the TTP and service access from server
 ## @details Sends a service request to the main server, then contacts the TTP to retrieve an encrypted AES session key.
 ## The key is decrypted using the client's private RSA key and stored globally for later encrypted communication.
@@ -124,7 +119,7 @@ def request_service():
         status_label.config(text=f"Error: {e}", fg="red")
 
 
-## @ingroup group2-1_client
+## @ingroup group2-user
 ## @brief Sends an encrypted message to the server
 ## @details Encrypts a user-provided message using a AES session key and sends it securely to the server via TCP.
 ## @exception AttributeError - Raised if GUI elements or session key are not initialized
@@ -148,6 +143,12 @@ def send_message():
     else:
         status_label.config(text="No AES key", fg="red")
 
+
+## @ingroup group2-user
+## @brief Sends a deliberately forged certificate to the server
+## @details Creates an invalid version of the client's certificate by modifying its contents and sends it to the server.
+## This function is intended for testing the server's certificate handling mechanisms
+## @exception socket.error - network communication failure
 def test_forged_certificate():
     if not GLOBAL_CERTIFICATE:
         return
@@ -168,7 +169,9 @@ def test_forged_certificate():
         status_label.config(text="Sent Forged Certificate", fg="orange")
     except Exception as e:
         print(e)
-## @ingroup group2-1_client
+
+
+## @ingroup group2-user
 ## @brief Initializes and runs the client GUI application
 ## @details Creates a Tkinter-based GUI that allows the user to:
 ## - Authenticate with a Trusted Third Party (TTP) ("Log in with TTP")

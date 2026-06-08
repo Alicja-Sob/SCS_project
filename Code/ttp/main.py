@@ -113,7 +113,7 @@ def main():
                         logger.info(f"Sent out the encrypted session key to the server")
 
                         pending_client_keys[client_id] = base64.b64encode(encrypted_session_key_for_client).decode('utf-8')                        
-                        logger.info(f"Saved the encrypted session key for client {client_id} as a penfing key")
+                        logger.info(f"Saved the encrypted session key for client {client_id} as a pending key")
 
                     else:
                         logger.warning(f"Unknown server / client ID: {server_id}, {client_id}")

@@ -122,19 +122,157 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__group2-
 <p>Files, methods, etc used to run the user application and facilitate its GUI.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-groups" class="groupheader"><a id="groups" name="groups"></a>
-Topics</h2></td></tr>
-<tr class="memitem:group2-1_5Fclient" id="r_group2-1_5Fclient"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="group__group2-1__client.html">GUI methods</a></td></tr>
-<tr class="memdesc:group__group2-1__client"><td class="mdescLeft">&#160;</td><td class="mdescRight">Methods facilitating the client application's GUI. <br /></td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
 <tr class="memitem:Code_2Fuser_2Fgui_2Epy" id="r_Code_2Fuser_2Fgui_2Epy"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="gui_8py.html">Code/user/gui.py</a></td></tr>
-<tr class="memdesc:gui_8py"><td class="mdescLeft">&#160;</td><td class="mdescRight">todo <br /></td></tr>
+<tr class="memdesc:gui_8py"><td class="mdescLeft">&#160;</td><td class="mdescRight">Methods facilitating the app's GUI and running the client application. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga2f210d6f2e3d3766ab7ce421b3ab9aaf" id="r_ga2f210d6f2e3d3766ab7ce421b3ab9aaf"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ga2f210d6f2e3d3766ab7ce421b3ab9aaf">gui.simulate_auth</a> ()</td></tr>
+<tr class="memdesc:ga2f210d6f2e3d3766ab7ce421b3ab9aaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simulates client authentication with a Trusted Third Party (TTP).  <br /></td></tr>
+<tr class="memitem:ga53b4595bccf6b2a020615f595267d3fe" id="r_ga53b4595bccf6b2a020615f595267d3fe"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ga53b4595bccf6b2a020615f595267d3fe">gui.request_service</a> ()</td></tr>
+<tr class="memdesc:ga53b4595bccf6b2a020615f595267d3fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests a session key from the TTP and service access from server.  <br /></td></tr>
+<tr class="memitem:gae555dac32495755b943f1dbc13da537f" id="r_gae555dac32495755b943f1dbc13da537f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#gae555dac32495755b943f1dbc13da537f">gui.send_message</a> ()</td></tr>
+<tr class="memdesc:gae555dac32495755b943f1dbc13da537f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an encrypted message to the server.  <br /></td></tr>
+<tr class="memitem:ga68166ff0ef008b04b3f5a19e92923df3" id="r_ga68166ff0ef008b04b3f5a19e92923df3"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ga68166ff0ef008b04b3f5a19e92923df3">gui.test_forged_certificate</a> ()</td></tr>
+<tr class="memdesc:ga68166ff0ef008b04b3f5a19e92923df3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a deliberately forged certificate to the server.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:ga82aea24dec4e3d438a7b92b096db9523" id="r_ga82aea24dec4e3d438a7b92b096db9523"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ga82aea24dec4e3d438a7b92b096db9523">gui.root</a> = tk.Tk()</td></tr>
+<tr class="memdesc:ga82aea24dec4e3d438a7b92b096db9523"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes and runs the client GUI application.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Files, methods, etc used to run the user application and facilitate its GUI. </p>
-</div></div><!-- contents -->
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga53b4595bccf6b2a020615f595267d3fe" name="ga53b4595bccf6b2a020615f595267d3fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga53b4595bccf6b2a020615f595267d3fe">&#9670;&#160;</a></span>request_service()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">request_service </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Requests a session key from the TTP and service access from server. </p>
+<p>Sends a service request to the main server, then contacts the TTP to retrieve an encrypted AES session key. The key is decrypted using the client's private RSA key and stored globally for later encrypted communication. </p><dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">socket.error</td><td>- network communication failure </td></tr>
+    <tr><td class="paramname">json.JSONDecodeError</td><td>- invalid JSON response </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gae555dac32495755b943f1dbc13da537f" name="gae555dac32495755b943f1dbc13da537f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae555dac32495755b943f1dbc13da537f">&#9670;&#160;</a></span>send_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">send_message </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends an encrypted message to the server. </p>
+<p>Encrypts a user-provided message using a AES session key and sends it securely to the server via TCP. </p><dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">AttributeError</td><td>- Raised if GUI elements or session key are not initialized </td></tr>
+    <tr><td class="paramname">socket.error</td><td>- Network communication failure </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2f210d6f2e3d3766ab7ce421b3ab9aaf" name="ga2f210d6f2e3d3766ab7ce421b3ab9aaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2f210d6f2e3d3766ab7ce421b3ab9aaf">&#9670;&#160;</a></span>simulate_auth()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">simulate_auth </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Simulates client authentication with a Trusted Third Party (TTP). </p>
+<p>Generates a client ID and RSA keys and performs a registration handshake with a trusted third party (TTP) over a TCP socket The client ID is encrypted with a TTP public key and sent along with the clients public key.</p>
+<p>If successfull service access is enabled in the GUI </p><dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">socket.error</td><td>- network communication failure </td></tr>
+    <tr><td class="paramname">json.JSONDecodeError</td><td>- invalid JSON response from TTP </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga68166ff0ef008b04b3f5a19e92923df3" name="ga68166ff0ef008b04b3f5a19e92923df3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga68166ff0ef008b04b3f5a19e92923df3">&#9670;&#160;</a></span>test_forged_certificate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">test_forged_certificate </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends a deliberately forged certificate to the server. </p>
+<p>Creates an invalid version of the client's certificate by modifying its contents and sends it to the server. This function is intended for testing the server's certificate handling mechanisms </p><dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">socket.error</td><td>- network communication failure </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+<a id="ga82aea24dec4e3d438a7b92b096db9523" name="ga82aea24dec4e3d438a7b92b096db9523"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga82aea24dec4e3d438a7b92b096db9523">&#9670;&#160;</a></span>root</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gui.root = tk.Tk()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initializes and runs the client GUI application. </p>
+<p>Creates a Tkinter-based GUI that allows the user to:</p><ul>
+<li>Authenticate with a Trusted Third Party (TTP) ("Log in with TTP")</li>
+<li>Request a secure AES session key ("Download AES key")</li>
+<li>Input and send encrypted messages to a server ("Send message") The GUI remains active via the Tk main event loop. </li>
+</ul>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

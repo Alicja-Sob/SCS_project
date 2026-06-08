@@ -13,5 +13,6 @@ var group__group1__crypto =
     [ "crypto.generate_RSA_key_pair", "group__group1__crypto.html#gaf68469ce90d26a591985fd2f3462cc12", null ],
     [ "crypto.serialize_certificate", "group__group1__crypto.html#ga9d44a2e9dc936f9e3f111fad8ce0e79c", null ],
     [ "crypto.serialize_private_key", "group__group1__crypto.html#ga239cf4bed537fa125ea754fbdc722bf5", null ],
-    [ "crypto.serialize_public_key", "group__group1__crypto.html#ga58af66fb9b1352ab8219c350396ca518", null ]
+    [ "crypto.serialize_public_key", "group__group1__crypto.html#ga58af66fb9b1352ab8219c350396ca518", null ],
+    [ "crypto.verify_certificate", "group__group1__crypto.html#gaaa22271d918e3eb321911b811ed21221", null ]
 ];

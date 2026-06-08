@@ -186,6 +186,16 @@ def decrypt_aes(key, ciphertext):
     plaintext = decryptor.update(ciphertext[16:]) + decryptor.finalize()
     return plaintext
 
+
+## @ingroup group1_crypto
+## @brief Verifying validity of a certificate
+## @details Verifies the authenticity of a certificate.
+## @param cert (Certificate) - certificate to verify
+## @param issuer_public_key (RSAPublicKey) - public RSA key of the certificate's issuer
+## @return Boolean
+## - True if certificate successfully verified
+## - False if verification fails
+## @exception Exception - caught internally when signature verification fails or when an invalid certificate and/or public key is provided.
 def verify_certificate(cert, issuer_public_key):
     try:
         issuer_public_key.verify(

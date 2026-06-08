@@ -54,7 +54,7 @@ def main():
                 ttp_id = data["id"]
                 ttp_public_key = crypto.deserialize_public_key(data["public_key"].encode('utf-8'))
                 GLOBAL_TTP_PUBLIC_KEY = ttp_public_key
-                logger.info(f"Recieved data from TTP: {data}")
+                logger.info(f"Received data from TTP: {data}")
 
                 encrypted_server_id = crypto.encrypt_data(ttp_public_key, server_id.encode('utf-8'))
                 encrypted_server_id_str = base64.b64encode(encrypted_server_id).decode('utf-8')
@@ -99,24 +99,24 @@ def main():
                         client_id = data.get("client_id")
                         request_type = data.get("type", "service_request")
                         if request_type == "service_request":    
-                            logger.info("Weryfikacja certyfikatu klienta...")
+                            logger.info("Verifying client certificate...")
 
                             client_cert_str = data.get("certificate")
                             if not client_cert_str:
-                                logger.warning("Brak certyfikatu")
+                                logger.warning("Missing certificate")
                                 continue
                             try :
                                 client_cert_obj = crypto.deserialize_certificate(client_cert_str.encode('utf-8'))
                                 is_valid = crypto.verify_certificate(client_cert_obj, GLOBAL_TTP_PUBLIC_KEY)
 
                                 if not is_valid:
-                                    logger.warning(f"Odrzucono klienta {client_id[:8]} Certyfikat jest sfałszowany")
+                                    logger.warning(f"Client rejected {client_id[:8]}. The certificate is forged")
                                     continue 
                             except Exception as e:
-                                logger.warning(f"Odrzucono klienta {client_id[:8]} Nie można zweryfikować certyfikatu: {e}")
+                                logger.warning(f"Client rejected {client_id[:8]}. Couldn't verify the certificate: {e}")
                                 continue
 
-                            logger.info("Certyfikat autentyczny Proszę TTP o klucz sesyjny")
+                            logger.info("Certificate authentic. Requesting session key from TTP")
                             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ttp_s:
                                 ttp_s.connect((host, port))
                                 payload = {

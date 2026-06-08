@@ -2,7 +2,7 @@
 
 The goal of the project is developing a set of applications emulating an environment with trusted third party (TTP) and client-server data exchange scenario
 
-# How to turn on the simulated environment
+# How to use the simulated environment
 
 to track logs in same console :
 `docker-compose up --build `

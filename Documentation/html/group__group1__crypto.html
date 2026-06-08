@@ -152,6 +152,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga971255627c8f256a332dac267e5fa37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypting data with AES.  <br /></td></tr>
 <tr class="memitem:gab1fe7480c030f1ff90d9cf46563a51e5" id="r_gab1fe7480c030f1ff90d9cf46563a51e5"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#gab1fe7480c030f1ff90d9cf46563a51e5">crypto.decrypt_aes</a> (key, ciphertext)</td></tr>
 <tr class="memdesc:gab1fe7480c030f1ff90d9cf46563a51e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypting data with AES.  <br /></td></tr>
+<tr class="memitem:gaaa22271d918e3eb321911b811ed21221" id="r_gaaa22271d918e3eb321911b811ed21221"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#gaaa22271d918e3eb321911b811ed21221">crypto.verify_certificate</a> (cert, issuer_public_key)</td></tr>
+<tr class="memdesc:gaaa22271d918e3eb321911b811ed21221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifying validity of a certificate.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Cryptography-related methods used throughout the whole project. </p>
@@ -537,6 +539,47 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bytes - PEM-encoded public key </dd></dl>
+
+</div>
+</div>
+<a id="gaaa22271d918e3eb321911b811ed21221" name="gaaa22271d918e3eb321911b811ed21221"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaa22271d918e3eb321911b811ed21221">&#9670;&#160;</a></span>verify_certificate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">verify_certificate </td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>cert</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>issuer_public_key</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Verifying validity of a certificate. </p>
+<p>Verifies the authenticity of a certificate. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cert</td><td>(Certificate) - certificate to verify </td></tr>
+    <tr><td class="paramname">issuer_public_key</td><td>(RSAPublicKey) - public RSA key of the certificate's issuer </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Boolean<ul>
+<li>True if certificate successfully verified</li>
+<li>False if verification fails </li>
+</ul>
+</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td>- caught internally when signature verification fails or when an invalid certificate and/or public key is provided. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
