@@ -54,8 +54,7 @@ def main():
         pending_client_keys = {}
         while True:
             conn, addr = s.accept()
-           
-            
+
             with conn:
             
                 logger.info(f"Connected : {addr}")
