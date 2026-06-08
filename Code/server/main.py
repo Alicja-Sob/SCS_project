@@ -30,7 +30,7 @@ logger = logging.getLogger("Server_App")
 ## - Receives encrypted messages from authenticated clients
 ## - Decrypts received data using negotiated AES session keys
 def main():
-
+    GLOBAL_TTP_PUBLIC_KEY = None
     logger.info("Generating IDs and keys by the server")
     server_id = crypto.generate_random_id()
     server_public_key, server_private_key = crypto.generate_RSA_key_pair()
@@ -53,6 +53,7 @@ def main():
                 data = json.loads(data.decode('utf-8'))
                 ttp_id = data["id"]
                 ttp_public_key = crypto.deserialize_public_key(data["public_key"].encode('utf-8'))
+                GLOBAL_TTP_PUBLIC_KEY = ttp_public_key
                 logger.info(f"Recieved data from TTP: {data}")
 
                 encrypted_server_id = crypto.encrypt_data(ttp_public_key, server_id.encode('utf-8'))
@@ -98,7 +99,24 @@ def main():
                         client_id = data.get("client_id")
                         request_type = data.get("type", "service_request")
                         if request_type == "service_request":    
+                            logger.info("Weryfikacja certyfikatu klienta...")
 
+                            client_cert_str = data.get("certificate")
+                            if not client_cert_str:
+                                logger.warning("Brak certyfikatu")
+                                continue
+                            try :
+                                client_cert_obj = crypto.deserialize_certificate(client_cert_str.encode('utf-8'))
+                                is_valid = crypto.verify_certificate(client_cert_obj, GLOBAL_TTP_PUBLIC_KEY)
+
+                                if not is_valid:
+                                    logger.warning(f"Odrzucono klienta {client_id[:8]} Certyfikat jest sfałszowany")
+                                    continue 
+                            except Exception as e:
+                                logger.warning(f"Odrzucono klienta {client_id[:8]} Nie można zweryfikować certyfikatu: {e}")
+                                continue
+
+                            logger.info("Certyfikat autentyczny Proszę TTP o klucz sesyjny")
                             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ttp_s:
                                 ttp_s.connect((host, port))
                                 payload = {

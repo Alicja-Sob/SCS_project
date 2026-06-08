@@ -6,6 +6,7 @@ import socket
 import base64
 GLOBAL_CLIENT_ID = None
 GLOBAL_SESSION_KEY = None
+GLOBAL_CERTIFICATE = None
 
 ## @defgroup group2-user User app
 ## @ingroup group2_mains
@@ -29,12 +30,11 @@ GLOBAL_SESSION_KEY = None
 ## @exception socket.error - network communication failure
 ## @exception json.JSONDecodeError - invalid JSON response from TTP
 def simulate_auth():
-    global GLOBAL_CLIENT_ID, GLOBAL_PRIVATE_KEY
+    global GLOBAL_CLIENT_ID, GLOBAL_PRIVATE_KEY, GLOBAL_CERTIFICATE
     client_id = crypto.generate_random_id()
     GLOBAL_CLIENT_ID = client_id
     client_public_key, client_private_key = crypto.generate_RSA_key_pair()
     GLOBAL_PRIVATE_KEY = client_private_key
-    GLOBAL_SESSION_KEY = None
     
     host = '127.0.0.1'
     port = 5000
@@ -65,8 +65,10 @@ def simulate_auth():
                 
                 cert_response = s.recv(4096)
                 if cert_response:
+                    GLOBAL_CERTIFICATE = cert_response.decode('utf-8')
                     status_label.config(text="Authorization correct", fg="green")
                     service_btn.config(state=tk.NORMAL)
+                    forge_btn.config(state=tk.NORMAL)
         
         except Exception as e:
             status_label.config(text=f"Błąd: {e}", fg="red")
@@ -90,7 +92,8 @@ def request_service():
             s.connect((server_host, server_port))
             payload = {
                 "type": "service_request",
-                "client_id": GLOBAL_CLIENT_ID
+                "client_id": GLOBAL_CLIENT_ID,
+                "certificate": GLOBAL_CERTIFICATE
                 }
             s.sendall(json.dumps(payload).encode('utf-8'))
             time.sleep(2)
@@ -145,7 +148,26 @@ def send_message():
     else:
         status_label.config(text="No AES key", fg="red")
 
+def test_forged_certificate():
+    if not GLOBAL_CERTIFICATE:
+        return
 
+    forged_cert = GLOBAL_CERTIFICATE.replace('a', 'b', 1)
+
+    server_host, server_port = '127.0.0.1', 7000
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((server_host, server_port))
+            payload = {
+                "type": "service_request",
+                "client_id": GLOBAL_CLIENT_ID,
+                "certificate": forged_cert
+            }
+            s.sendall(json.dumps(payload).encode('utf-8'))
+
+        status_label.config(text="Sent Forged Certificate", fg="orange")
+    except Exception as e:
+        print(e)
 ## @ingroup group2-1_client
 ## @brief Initializes and runs the client GUI application
 ## @details Creates a Tkinter-based GUI that allows the user to:
@@ -172,5 +194,8 @@ msg_entry.pack(pady=5)
 
 send_btn = tk.Button(root, text="Send message", state=tk.DISABLED, command=send_message)
 send_btn.pack(pady=5)
+
+forge_btn = tk.Button(root, text="Send Forged Certificate", state=tk.DISABLED, command=test_forged_certificate)
+forge_btn.pack(pady=5)
 
 root.mainloop()

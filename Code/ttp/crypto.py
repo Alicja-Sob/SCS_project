@@ -89,3 +89,14 @@ def decrypt_aes(key, ciphertext):
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext[16:]) + decryptor.finalize()
     return plaintext
+def verify_certificate(cert, issuer_public_key):
+    try:
+        issuer_public_key.verify(
+            cert.signature,
+            cert.tbs_certificate_bytes,
+            padding.PKCS1v15(),
+            cert.signature_hash_algorithm
+        )
+        return True
+    except Exception as e:
+        return False
