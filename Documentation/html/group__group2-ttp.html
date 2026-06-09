@@ -122,49 +122,14 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__group2-
 <p>Files, methods, etc used to run the TTP application.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ga51af30a60f9f02777c6396b8247e356f" id="r_ga51af30a60f9f02777c6396b8247e356f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ga51af30a60f9f02777c6396b8247e356f">main.main</a> ()</td></tr>
-<tr class="memdesc:ga51af30a60f9f02777c6396b8247e356f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the Trusted Third Party (TTP) server.  <br /></td></tr>
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:Code_2Fttp_2Fmain_2Epy" id="r_Code_2Fttp_2Fmain_2Epy"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="ttp_2main_8py.html">Code/ttp/main.py</a></td></tr>
+<tr class="memdesc:ttp_2main_8py"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the Trusted Third Party (TTP) server. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Files, methods, etc used to run the TTP application. </p>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="ga51af30a60f9f02777c6396b8247e356f" name="ga51af30a60f9f02777c6396b8247e356f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga51af30a60f9f02777c6396b8247e356f">&#9670;&#160;</a></span>main()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">main </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Starts the Trusted Third Party (TTP) server. </p>
-<p>Initializes the TTP identity, generates an RSA key pair and self-signed certificate, then starts a TCP server.</p>
-<p>The server processes three types of requests:</p><ul>
-<li>register: registers a client or server and issues a certificate.</li>
-<li>session_request: generates and distributes an AES session key.</li>
-<li>fetch_key: allows a client to retrieve a pending encrypted session key.</li>
-</ul>
-<p>Registered entities are stored in memory together with their public keys and connection information. Generated session keys are encrypted using the recipient's RSA public key before transmission.</p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">socket.error</td><td>- raised when a network communication error occurs. </td></tr>
-    <tr><td class="paramname">json.JSONDecodeError</td><td>- raised when an invalid JSON message is received. </td></tr>
-    <tr><td class="paramname">ValueError</td><td>- raised when malformed cryptographic data is processed. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('ttp_2main_8py.
 </div><!--header-->
 <div class="contents">
 
-<p>TTP MAIN.  
+<p>Starts the Trusted Third Party (TTP) server.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-namespaces" class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -131,7 +131,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a51af30a60f9f02777c6396b8247e356f" id="r_a51af30a60f9f02777c6396b8247e356f"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="namespacemain.html#a51af30a60f9f02777c6396b8247e356f">main.main</a> ()</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>TTP MAIN. </p>
+<div class="textblock"><p>Starts the Trusted Third Party (TTP) server. </p>
+<p>Initializes the TTP identity, generates an RSA key pair and self-signed certificate, then starts a TCP server. The server processes three types of requests:</p><ul>
+<li>register: registers a client or server and issues a certificate.</li>
+<li>session_request: generates and distributes an AES session key.</li>
+<li>fetch_key: allows a client to retrieve a pending encrypted session key. Registered entities are stored in memory together with their public keys and connection information. Session keys are encrypted using the recipient's RSA public key before transmission. </li>
+</ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

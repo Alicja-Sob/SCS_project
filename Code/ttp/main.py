@@ -15,16 +15,15 @@ logger = logging.getLogger("TTP_App")
 ## Files, methods, etc used to run the TTP application
 
 ## @ingroup group2-ttp
+## @file ttp/main.py
 ## @brief Starts the Trusted Third Party (TTP) server
 ## @details Initializes the TTP identity, generates an RSA key pair and self-signed certificate, then starts a TCP server.
-##
 ## The server processes three types of requests:
 ## - register: registers a client or server and issues a certificate.
 ## - session_request: generates and distributes an AES session key.
 ## - fetch_key: allows a client to retrieve a pending encrypted session key.
-##
 ## Registered entities are stored in memory together with their public keys and connection information.
-## Generated session keys are encrypted using the recipient's RSA public key before transmission.
+## Session keys are encrypted using the recipient's RSA public key before transmission.
 
 ## @exception socket.error - raised when a network communication error occurs.
 ## @exception json.JSONDecodeError - raised when an invalid JSON message is received.
