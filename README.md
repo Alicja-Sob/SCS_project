@@ -18,8 +18,8 @@ to turn off :
 
 ## Using client service
 ```
-cd user
-python client_gui.py
+cd Code\user
+python gui.py
 ```
 
 ## Flow test 
