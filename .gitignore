@@ -5,6 +5,8 @@ __pycache__/
 venv/
 ENV/
 
+Documentation/latex/
+
 .dockerignore
 
 .vscode/
